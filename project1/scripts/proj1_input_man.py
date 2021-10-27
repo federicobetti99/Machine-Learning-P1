@@ -1,4 +1,5 @@
 import numpy as np
+from proj1_helpers import *
 
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
@@ -18,6 +19,26 @@ def load_csv_data(data_path, sub_sample=False):
         ids = ids[::50]
 
     return yb, input_data, ids
+
+def create_output(tX_test,predictions_0, predictions_1, predictions_2_3):
+    stacked_predictions = []
+    count_0 = 0
+    count_1 = 0
+    count_2_3 = 0
+    zero_indices,one_indices,two_three_indices = split_to_Jet_Num_Help(tX_test)
+    for index_row in range(tX_test.shape[0]):
+        if index_row in zero_indices:
+            stacked_predictions.append(predictions_0[count_0])
+            count_0 = count_0 + 1
+        elif index_row in one_indices:
+            stacked_predictions.append(predictions_1[count_1])
+            count_1 = count_1 +1
+        else:
+            stacked_predictions.append(predictions_2_3[count_2_3])
+            count_2_3 = count_2_3 + 1
+    final_predictions = np.array([-1 if el < 0.5 else 1 for el in stacked_predictions])
+    return final_predictions
+
 
 # dividing the rows of tX by the number of jets, dropping the column Pri_Jet_Num and adding an extra column of np.ones
 def split_to_Jet_Num_Help(tX):
@@ -66,7 +87,7 @@ def fix_array(tX,delete = None):
         index_column_valid =np.where(tX[:,i] != -999.)[0]
         if len(index_column_valid)==0:
             #we drop the column (we will have to do the same for the test set as well)
-            if delete is not None: 
+            if delete is not None:
                 col_to_delete.append(i)
             else:
                 print("You have an invalid column all values are -999.:",i)
