@@ -75,14 +75,14 @@ def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     acc_test = compute_accuracy(y_testing, predictions_test)
     return acc_test
 
-def finetune_GD(tX, y, k_fold = 5, degrees = np.arange(1,5)):
+def finetune_GD(tX, y, k_fold = 4, degrees = np.arange(1,5)):
     seed = 1
     testing_acc = np.zeros(len(degrees))
     k_indices = build_k_indices(y, k_fold, seed)
     for index in range(len(degrees)):
         current_sum_test = 0
         for k in range(k_fold):
-            current_test_acc = cross_validation_grad_desc(y, tX, k_indices, k, degrees[index], gamma = 5*10e-4)
+            current_test_acc = cross_validation_GD(y, tX, k_indices, k, degrees[index], gamma = 5*10e-4)
             current_sum_test += current_test_acc
         testing_acc[index] = current_sum_test / k_fold
     best_result = np.where(testing_acc == np.amax(testing_acc))
