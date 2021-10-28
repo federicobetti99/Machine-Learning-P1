@@ -146,7 +146,7 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
     x_testing_augmented = build_poly(x_testing, degree)
     _, w_opt_training = learning_by_penalized_gradient(y_training, x_training_augmented,
                                                        np.zeros(x_training_augmented.shape[1]), gamma, 1000, lambda_)
-    predictions_test = x_testing_augmented @ w_opt_training
+    predictions_test = sigmoid(x_testing_augmented @ w_opt_training)
     predictions_test = np.array([0 if el < 0.5 else 1 for el in predictions_test])
     acc_test = compute_accuracy(y_testing, predictions_test)
     return acc_test
