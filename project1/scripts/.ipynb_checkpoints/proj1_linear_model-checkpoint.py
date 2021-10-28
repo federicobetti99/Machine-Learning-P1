@@ -65,8 +65,11 @@ def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     y_testing = y[k_indices[k]]
     x_training_augmented = build_poly(x_training, degree)
     x_testing_augmented = build_poly(x_testing, degree)
-    losses, ws = least_squares_GD(y_training, x_training_augmented, np.zeros(x_training_augmented.shape[1]) , 2000, gamma)
+    losses, ws = least_squares_GD(y_training, x_training_augmented, np.zeros(x_training_augmented.shape[1]) , 1000, gamma)
     w_opt_training = ws[-1]
+    print(losses)
+    #loss_tr = compute_loss(y_training, x_training_augmented, w_opt_training)
+    #loss_te = compute_loss(y_testing, x_testing_augmented, w_opt_training)
     predictions_test = x_testing_augmented@w_opt_training
     print(predictions_test)
     predictions_test = np.array([0 if el <0.5 else 1 for el in predictions_test])
@@ -74,22 +77,6 @@ def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     print(y_testing)
     acc_test = compute_accuracy(y_testing, predictions_test)
     return acc_test
-
-def finetune_GD(tX, y, k_fold = 5, degrees = np.arange(1,5)):
-    seed = 1
-    testing_acc = np.zeros(len(degrees))
-    k_indices = build_k_indices(y, k_fold, seed)
-    for index in range(len(degrees)):
-        current_sum_test = 0
-        for k in range(k_fold):
-            current_test_acc = cross_validation_grad_desc(y, tX, k_indices, k, degrees[index], gamma = 5*10e-4)
-            current_sum_test += current_test_acc
-        testing_acc[index] = current_sum_test / k_fold
-    best_result = np.where(testing_acc == np.amax(testing_acc))
-    print(testing_acc)
-    degree_opt = degrees[best_result[0]]
-    print(degree_opt)
-    return degree_opt
 
 ###########################################################
 #       Stochastic Gradient Descent                       #
