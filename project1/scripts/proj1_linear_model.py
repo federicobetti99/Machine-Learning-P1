@@ -27,6 +27,7 @@ def compute_gradient(y, tx, w):
 # do the gradient descent algorithm
 # max_iters = the maximum number of repetitions the algorithm is allowed to do
 # gamma = the step of the function in the direction of the gradient
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     ws = [initial_w]# A list of all the weights
     losses = []
@@ -46,6 +47,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 # k-indices = random subsets of the original samples
 # k the set that we will use as the test set out of the subsets
 # degree = the degree up to which we will exponentiate each feature
+
 def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     """return the loss of ridge regression."""
     N = y.shape[0]
@@ -68,10 +70,7 @@ def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     losses, ws = least_squares_GD(y_training, x_training_augmented, np.zeros(x_training_augmented.shape[1]) , 2000, gamma)
     w_opt_training = ws[-1]
     predictions_test = x_testing_augmented@w_opt_training
-    print(predictions_test)
     predictions_test = np.array([0 if el <0.5 else 1 for el in predictions_test])
-    print(predictions_test)
-    print(y_testing)
     acc_test = compute_accuracy(y_testing, predictions_test)
     return acc_test
 
@@ -91,6 +90,19 @@ def finetune_GD(tX, y, k_fold = 4, degrees = np.arange(1,5)):
     print(degree_opt)
     return degree_opt
 
+def optimal_weights_GD(tX,y,degree):
+    tX_augmented = build_poly(tX, degree)
+    losses, ws = least_squares_GD(y, tX_augmented, np.zeros(tX_augmented.shape[1]) , 2000, 5*10e-4)
+    w_opt_GD = ws[-1]
+    return w_opt_GD
+
+def predict_GD(tX,w,degree=2):
+    # make the predictions with the augmented test set
+    #since we trained the model in augmented data, we augment the test set
+    tX_augmented = build_poly(tX, degree)
+    # make the predictions with the augmented test set and GD
+    predictions_GD = tX_augmented @ w
+    return predictions_GD
 ###########################################################
 #       Stochastic Gradient Descent                       #
 ###########################################################

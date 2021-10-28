@@ -93,16 +93,22 @@ def penalized_logistic_regression(y, tx, w, lambda_):
 
 # Execute one step of regularized logistic regression
 def learning_by_penalized_gradient(y, tx, w_initial, gamma, max_iters, lambda_):
-    threshold = 1e-8 # threshold to stop execution
+    """
+    Do one step of gradient descent, using the penalized logistic regression.
+    Return the loss and updated w.
+    """
+    threshold = 1e-8
     losses = []
-    w = w_initial # initialize weights for the first iteration of the algorithm
+    drop = 0.5
+    iter_drop = 25
+    w = w_initial
     for iter in range(max_iters):
-        grad = calculate_gradient(y, tx, w) + 2*lambda_*w # calcualte gradient
-        w = w - gamma * grad # update the weights given the gradient and the step
-        loss = calculate_loss(y, tx, w) + lambda_*np.linalg.norm(w) ** 2 # compute loss
-        losses.append(loss) # append loss to the list of losses
-        if iter % 25 == 0:
-            gamma = gamma / 2 # decrease gamma after some iterations to increase the fitting of the parameters
+        grad = calculate_gradient(y, tx, w) + 2*lambda_*w
+        w = w - gamma * grad
+        loss = calculate_loss(y, tx, w) + lambda_*np.linalg.norm(w) ** 2
+        losses.append(loss)
+        if iter % iter_drop == 0:
+            gamma = gamma * drop ** np.floor((1+iter) / (iter_drop))
             #print("Current iteration={i}, loss={l}".format(i=iter, l=loss))
         # converge criterion
         if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
@@ -119,14 +125,12 @@ def learning_by_penalized_gradient(y, tx, w_initial, gamma, max_iters, lambda_):
 # k the set that we will use as the test set out of the subsets
 # lambda_ = the lambda for the regularization function
 # degree = the degree up to which we will exponentiate each feature
-def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma = 3.0e-02):
+def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
     """return the loss of ridge regression."""
-    N = y.shape[0] # the number of features
+    N = y.shape[0]
     k_fold = k_indices.shape[0]
     list_ = []
-    interval = int(N/k_fold) # the length of each subset
-    # this is not well written and should be changed it is very hard to understand
-    # Create a list of the indices of subsets that are supposed to be used as a training set
+    interval = int(N/k_fold)
     for i in range(k_fold):
         if i != k:
             list_.append(i)
@@ -134,22 +138,18 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma = 3.0e-
     y_training = np.zeros(int((k_fold-1)/k_fold*N))
     for j in range(len(list_)):
         x_training[interval*(j):interval*(j+1), :] = x[np.array([k_indices[list_[j]]]), :]
+    x_testing = x[k_indices[k], :]
     for j in range(len(list_)):
         y_training[interval*(j):interval*(j+1)] = y[np.array([k_indices[list_[j]]])]
-    # get the testing set out of the remaining set
-    x_testing = x[k_indices[k], :]
     y_testing = y[k_indices[k]]
-    # augment the testing and training set feature vectors
     x_training_augmented = build_poly(x_training, degree)
     x_testing_augmented = build_poly(x_testing, degree)
-    #w_opt_training = ridge_regression(y_training, x_training_augmented, lambda_)
-    # get optimal weights
-    _,  w_opt_training = learning_by_penalized_gradient(y_training, x_training_augmented,
-                                                        np.ones(x_training_augmented.shape[1]), gamma, 1000, lambda_)
-    # calculate losses for the training and test set respectively and return them
-    loss_tr = calculate_loss(y_training, x_training_augmented, w_opt_training)
-    loss_te = calculate_loss(y_testing, x_testing_augmented, w_opt_training)
-    return loss_tr, loss_te
+    _, w_opt_training = learning_by_penalized_gradient(y_training, x_training_augmented,
+                                                       np.zeros(x_training_augmented.shape[1]), gamma, 1000, lambda_)
+    predictions_test = x_testing_augmented @ w_opt_training
+    predictions_test = np.array([0 if el < 0.5 else 1 for el in predictions_test])
+    acc_test = compute_accuracy(y_testing, predictions_test)
+    return acc_test
 
 
 # the following function aims at finetuning the hyperparameters for the logistic regression model
@@ -158,34 +158,29 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma = 3.0e-
 # k_fold = the number of splits the dataset should be split into
 # degrees = the range of the degrees to be tested for data augmentation
 # lambdas = the different lambdas that can be used as a regularization param
-def finetune_logistic(tX, y, gamma = 3.0e-02, k_fold=3, degrees = np.arange(2, 7), lambdas = np.logspace(-5,0,15)):
+def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
     seed = 1
-    training_loss = np.zeros((len(lambdas), len(degrees)))# initial 2-d array for the grid search or the lambdas and the degrees
-    testing_loss = np.zeros((len(lambdas), len(degrees)))# initial 2-d array for the grid search or the lambdas and the degrees
-    k_indices = build_k_indices(y, k_fold, seed)#create the subarrays for the cross_validation
+    testing_acc = np.zeros((len(lambdas), len(degrees)))
+    k_indices = build_k_indices(y, k_fold, seed)
     for index1 in range(len(lambdas)):
         for index2 in range(len(degrees)):
-            train_loss = 0 # initialize the training loss for each repetition
-            test_loss = 0 # initialize the test loss for each repetition
-            #run the cross validation for each possible split into test-train
+            test_acc = 0
             for k in range(k_fold):
-                loss_tr, loss_te = cross_validation_logistic(y, tX, k_indices, k,
-                                                    lambdas[index1], degrees[index2], gamma)
-            train_loss += loss_tr # increase the training loss for this execution
-            test_loss += loss_te # increase the test loss for this execution
-            training_loss[index1, index2] = train_loss / k_fold # save the average of the training loss
-            testing_loss[index1, index2] = test_loss / k_fold # save the average of the testing loss
-    best_result = np.where(testing_loss == np.amin(testing_loss)) # get the optimal index for the hyper parameters
-    # get and print the optimal values
+                current_test_acc = cross_validation_logistic(y, tX, 
+                                                            k_indices, k, lambdas[index1], degrees[index2], gamma)
+                test_acc += current_test_acc
+            testing_acc[index1, index2] = test_acc / k_fold
+    best_result = np.where(testing_acc == np.amax(testing_acc))
     lambda_opt, degree_opt = lambdas[best_result[0]], degrees[best_result[1]]
-    print(lambda_opt[0], degree_opt[0])
-    return lambda_opt[0], degree_opt[0]
+    print(lambda_opt, degree_opt)
+    print(np.amax(testing_acc))
+    return lambda_opt, degree_opt
 
 # calculate weights given the degree of data augmentation and the lambda_
-def optimal_weights_logistic(tX,y,degree=2,lambda_=0):
+def optimal_weights_logistic(tX,y, gamma,degree=2, lambda_=0):
     #Augment the feauture vector and calculate the optimal weights for logistic regression
     tX_augmented = build_poly(tX,degree)
-    _, w_logistic_0 = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), 3.0e-02,
+    _, w_logistic_0 = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), gamma,
                                               1000, lambda_= 1)
 
 def predict_logistic(tX,w,degree=2):
