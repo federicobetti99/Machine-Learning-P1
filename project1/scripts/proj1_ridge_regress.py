@@ -114,14 +114,14 @@ def finetune_ridge(tX,y,k_fold = 5,degrees = np.arange(2, 7),lambdas = np.logspa
     return lambda_opt[0], degree_opt[0]
 
 # calculate weights given the degree of data augmentation and the lambda_
-def optimal_weights_ridge(tX,y,degree=2,lambda_=0):
+def optimal_weights_ridge(tX,y,degree,lambda_):
     tX_augmented = build_poly(tX, degree)
     w_ridge = ridge_regression(y, tX_augmented, lambda_)
     return w_ridge
 
-def predict_ridge(tX,w,degree = 2):
+def predict_ridge(tX,w,degree):
     #since we trained the model in augmented data, we augment the test set
-    tX_augmented = build_poly(tX, degree=6)
+    tX_augmented = build_poly(tX, degree)
     # make the predictions with the augmented test set and ridge resgression
     predictions_ridge = tX_augmented @ w
     return predictions_ridge

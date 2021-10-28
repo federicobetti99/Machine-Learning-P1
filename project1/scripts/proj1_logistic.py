@@ -174,7 +174,7 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
     lambda_opt, degree_opt = lambdas[best_result[0]], degrees[best_result[1]]
     print(lambda_opt, degree_opt)
     print(np.amax(testing_acc))
-    return lambda_opt, degree_opt
+    return lambda_opt[0], degree_opt[0]
 
 # calculate weights given the degree of data augmentation and the lambda_
 def optimal_weights_logistic(tX,y, gamma,degree=2, lambda_=0):
@@ -190,3 +190,79 @@ def predict_logistic(tX,w,degree=2):
     # make the predictions with the augmented test set and logistic regression
     predictions_logistic = sigmoid(tX_augmented @ w)
     return predictions_logistic
+
+# calculate the batch gradient for logistic regression
+def calculate_batch_gradient(y, tx, w, batchsize):
+    random_indices = np.random.randint(0, y.shape[0], batchsize)
+    tx_small_rand = tx[random_indices]
+    y_small_rand = y[random_indices]
+    w_small_rand = w[random_indices]
+    return np.transpose(tx_small_rand) @ (sigmoid(tx_small_rand @ w_small_rand) - y_small_rand), random_indices
+
+def learning_by_penalized_batch_gradient(y, tx, w_initial, gamma, max_iters, lambda_, batchsize):
+    """
+    Do one step of gradient descent, using the penalized logistic regression.
+    Return the loss and updated w.
+    """
+    threshold = 1e-8
+    losses = []
+    drop = 0.5
+    iter_drop = 25
+    w = w_initial
+    for iter in range(max_iters):
+        grad = calculate_batch_gradient(y, tx, w, batchsize=1000)
+        grad = grad + 2*lambda_*w[random_indices]
+        w = w - gamma * grad
+        loss = calculate_loss(y, tx, w) + lambda_*np.linalg.norm(w) ** 2
+        losses.append(loss)
+        if iter % iter_drop == 0:
+            gamma = gamma * drop ** np.floor((1+iter) / (iter_drop))
+            #print("Current iteration={i}, loss={l}".format(i=iter, l=loss))
+        # converge criterion
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+    return losses, w
+
+def cross_validation_logistic_batch(y, x, k_indices, k, lambda_, degree, gamma):
+    """return the loss of ridge regression."""
+    N = y.shape[0]
+    k_fold = k_indices.shape[0]
+    list_ = []
+    interval = int(N/k_fold)
+    for i in range(k_fold):
+        if i != k:
+            list_.append(i)
+    x_training = np.zeros((int((k_fold-1)/k_fold*N), x.shape[1]))
+    y_training = np.zeros(int((k_fold-1)/k_fold*N))
+    for j in range(len(list_)):
+        x_training[interval*(j):interval*(j+1), :] = x[np.array([k_indices[list_[j]]]), :]
+    x_testing = x[k_indices[k], :]
+    for j in range(len(list_)):
+        y_training[interval*(j):interval*(j+1)] = y[np.array([k_indices[list_[j]]])]
+    y_testing = y[k_indices[k]]
+    x_training_augmented = build_poly(x_training, degree)
+    x_testing_augmented = build_poly(x_testing, degree)
+    _, w_opt_training = learning_by_penalized_batch_gradient(y_training, x_training_augmented,
+                                                       np.zeros(x_training_augmented.shape[1]), gamma, 7000, lambda_, 1000)
+    predictions_test = sigmoid(x_testing_augmented @ w_opt_training)
+    predictions_test = np.array([0 if el < 0.5 else 1 for el in predictions_test])
+    acc_test = compute_accuracy(y_testing, predictions_test)
+    return acc_test
+
+def finetune_batch_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
+    seed = 1
+    testing_acc = np.zeros((len(lambdas), len(degrees)))
+    k_indices = build_k_indices(y, k_fold, seed)
+    for index1 in range(len(lambdas)):
+        for index2 in range(len(degrees)):
+            test_acc = 0
+            for k in range(k_fold):
+                current_test_acc = cross_validation_logistic(y, tX, 
+                                                            k_indices, k, lambdas[index1], degrees[index2], gamma)
+                test_acc += current_test_acc
+            testing_acc[index1, index2] = test_acc / k_fold
+    best_result = np.where(testing_acc == np.amax(testing_acc))
+    lambda_opt, degree_opt = lambdas[best_result[0]], degrees[best_result[1]]
+    print(lambda_opt, degree_opt)
+    print(np.amax(testing_acc))
+    return lambda_opt[0], degree_opt[0]
