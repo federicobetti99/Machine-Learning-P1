@@ -5,24 +5,24 @@ import numpy as np
 from functools import partial
 
 
-#def load_csv_data(data_path, sub_sample=False):
+def load_csv_data(data_path, sub_sample=False):
 #    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
-#    y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
-#    x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
-#    ids = x[:, 0].astype(np.int)
-#    input_data = x[:, 2:]
+    y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
+    x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
+    ids = x[:, 0].astype(np.int)
+    input_data = x[:, 2:]
 
     # convert class labels from strings to binary (-1,1)
-#    yb = np.ones(len(y))
-#    yb[np.where(y=='b')] = -1
+    yb = np.ones(len(y))
+    yb[np.where(y=='b')] = -1
 
     # sub-sample
-#    if sub_sample:
-#        yb = yb[::50]
-#        input_data = input_data[::50]
-#        ids = ids[::50]
+    if sub_sample:
+        yb = yb[::50]
+        input_data = input_data[::50]
+        ids = ids[::50]
 
-#    return yb, input_data, ids
+    return yb, input_data, ids
 
 
 def predict_labels(weights, data):
@@ -92,8 +92,20 @@ def random_interval(low, high, size):
 #augment feature vector X by raising to a certain polynomial the whole vector
 # e.g. build_poly_cov([x1 x2]) = [x1 x1^2 x2 x2^2 x1x2]
 def build_poly_cov(x,degree=2):
-    x = np.apply_along_axis(partial(build_poly_cov_help,degree),1,x)
-    return x
+    res = x
+    N = x.shape[0]
+    x_transp = res[:, None]
+    temp = res
+    temp = x_transp*temp
+    nt = []
+    count = 0
+    for i in range(N):
+        nt.append(temp[i,count:].tolist())
+        count = count + 1
+    fl = [i for item in nt for i in item]
+    res = x.tolist() + fl
+    # x = np.apply_along_axis(partial(build_poly_cov_help,degree),1,x)
+    return res
 
 
 # build the k vector of shuffled indices

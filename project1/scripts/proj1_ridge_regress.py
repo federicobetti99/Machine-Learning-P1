@@ -93,7 +93,7 @@ def cross_validation_ridge(y, x, k_indices, k, lambda_, degree):
 # degrees = the range of the degrees to be tested for data augmentation
 # lambdas = the different lambdas that can be used as a regularization param
 
-def finetune_ridge(tX,y,k_fold = 5,degrees = np.arange(2, 7),lambdas = np.logspace(-5,0,15)):
+def finetune_ridge(tX, y, k_fold = 5, degrees = np.arange(2, 7), lambdas = np.logspace(-5,0,15)):
     seed = 1 # initialise the seed for the randomizer
     testing_acc = np.zeros((len(lambdas), len(degrees)))# initial 2-d array for the grid search or the lambads and the degrees
     k_indices = build_k_indices(y, k_fold, seed) #create the subarrays for the cross_validation
@@ -114,7 +114,7 @@ def finetune_ridge(tX,y,k_fold = 5,degrees = np.arange(2, 7),lambdas = np.logspa
     return lambda_opt[0], degree_opt[0]
 
 # calculate weights given the degree of data augmentation and the lambda_
-def optimal_weights_ridge(tX,y,degree,lambda_):
+def optimal_weights_ridge(tX, y, degree, lambda_):
     tX_augmented = build_poly(tX, degree)
     w_ridge = ridge_regression(y, tX_augmented, lambda_)
     return w_ridge

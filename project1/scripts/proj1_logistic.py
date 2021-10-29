@@ -177,13 +177,14 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
     return lambda_opt[0], degree_opt[0]
 
 # calculate weights given the degree of data augmentation and the lambda_
-def optimal_weights_logistic(tX,y, gamma,degree=2, lambda_=0):
+def optimal_weights_logistic(tX, y, gamma, degree, lambda_):
     #Augment the feauture vector and calculate the optimal weights for logistic regression
     tX_augmented = build_poly(tX,degree)
-    _, w_logistic_0 = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), gamma,
+    _, w_logistic = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), gamma,
                                               1000, lambda_= 1)
+    return w_logistic
 
-def predict_logistic(tX,w,degree=2):
+def predict_logistic(tX, w, degree):
     # make the predictions with the augmented test set
     #since we trained the model in augmented data, we augment the test set
     tX_augmented = build_poly(tX, degree)
@@ -257,7 +258,7 @@ def finetune_batch_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
         for index2 in range(len(degrees)):
             test_acc = 0
             for k in range(k_fold):
-                current_test_acc = cross_validation_logistic(y, tX, 
+                current_test_acc = cross_validation_logistic_batch(y, tX, 
                                                             k_indices, k, lambdas[index1], degrees[index2], gamma)
                 test_acc += current_test_acc
             testing_acc[index1, index2] = test_acc / k_fold

@@ -110,7 +110,7 @@ def predict_GD(tX,w,degree=2):
 # compute the stochastic gradient of a random sample
 def compute_stoch_gradient(y, tx, w):
     N = y.shape[0]# number of samples
-    random_number = random.randint(0,N)# generate random index
+    random_number = np.random.randint(0,N)# generate random index
     xn = tx[random_number,:]# get sample of that index
     random_gradient = - np.dot(xn, y[random_number] - np.dot(xn,w))# calculate the stochastic gradient
     return random_gradient
@@ -131,6 +131,62 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
         # print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
         #    bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
     return losses, ws
+
+def cross_validation_SGD(y, x, k_indices, k, degree, gamma):
+    """return the loss of ridge regression."""
+    N = y.shape[0]
+    k_fold = k_indices.shape[0]
+    list_ = []
+    interval = int(N/k_fold)
+    for i in range(k_fold):
+        if i != k:
+            list_.append(i)
+    x_training = np.zeros((int((k_fold-1)/k_fold*N), x.shape[1]))
+    y_training = np.zeros(int((k_fold-1)/k_fold*N))
+    for j in range(len(list_)):
+        x_training[interval*(j):interval*(j+1), :] = x[np.array([k_indices[list_[j]]]), :]
+    x_testing = x[k_indices[k], :]
+    for j in range(len(list_)):
+        y_training[interval*(j):interval*(j+1)] = y[np.array([k_indices[list_[j]]])]
+    y_testing = y[k_indices[k]]
+    x_training_augmented = build_poly(x_training, degree)
+    x_testing_augmented = build_poly(x_testing, degree)
+    losses, ws = least_squares_SGD(y_training, x_training_augmented, np.zeros(x_training_augmented.shape[1]) , 1000, gamma)
+    w_opt_training = ws[-1]
+    predictions_test = x_testing_augmented@w_opt_training
+    predictions_test = np.array([0 if el <0.5 else 1 for el in predictions_test])
+    acc_test = compute_accuracy(y_testing, predictions_test)
+    return acc_test
+
+def finetune_SGD(tX, y, k_fold = 4, degrees = np.arange(1,5)):
+    seed = 1
+    testing_acc = np.zeros(len(degrees))
+    k_indices = build_k_indices(y, k_fold, seed)
+    for index in range(len(degrees)):
+        current_sum_test = 0
+        for k in range(k_fold):
+            current_test_acc = cross_validation_SGD(y, tX, k_indices, k, degrees[index], gamma = 5*10e-4)
+            current_sum_test += current_test_acc
+        testing_acc[index] = current_sum_test / k_fold
+    best_result = np.where(testing_acc == np.amax(testing_acc))
+    print(testing_acc)
+    degree_opt = degrees[best_result[0]]
+    print(degree_opt)
+    return degree_opt
+
+def optimal_weights_SGD(tX, y, degree):
+    tX_augmented = build_poly(tX, degree)
+    losses, ws = least_squares_SGD(y, tX_augmented, np.zeros(tX_augmented.shape[1]) , 2000, 5*10e-4)
+    w_opt_SGD = ws[-1]
+    return w_opt_SGD
+
+def predict_SGD(tX, w, degree=2):
+    # make the predictions with the augmented test set
+    #since we trained the model in augmented data, we augment the test set
+    tX_augmented = build_poly(tX, degree)
+    # make the predictions with the augmented test set and GD
+    predictions_SGD = tX_augmented @ w
+    return predictions_SGD
 
 ############################################################
 #         Normal Equations                                 #
