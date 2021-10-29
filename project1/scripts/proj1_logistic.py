@@ -181,7 +181,7 @@ def optimal_weights_logistic(tX, y, gamma, degree, lambda_):
     #Augment the feauture vector and calculate the optimal weights for logistic regression
     tX_augmented = build_poly(tX,degree)
     _, w_logistic = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), gamma,
-                                              1000, lambda_= 1)
+                                              1000, lambda_)
     return w_logistic
 
 def predict_logistic(tX, w, degree):
