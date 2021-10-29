@@ -66,6 +66,7 @@ def find_mass(tX):
     tX = np.insert(tX, 0, column_to_add, axis=1)
     return tX
 
+
 # Replacing the outliers in valid columns
 # In case delete = 0 erase columns that are invalid (all values = -999.)
 # initialize the list of columns that need to be deleted
