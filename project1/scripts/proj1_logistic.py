@@ -159,7 +159,7 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
 # degrees = the range of the degrees to be tested for data augmentation
 # lambdas = the different lambdas that can be used as a regularization param
 def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
-    seed = 1
+    seed = 3
     testing_acc = np.zeros((len(lambdas), len(degrees)))
     k_indices = build_k_indices(y, k_fold, seed)
     for index1 in range(len(lambdas)):
@@ -191,6 +191,10 @@ def predict_logistic(tX, w, degree):
     # make the predictions with the augmented test set and logistic regression
     predictions_logistic = sigmoid(tX_augmented @ w)
     return predictions_logistic
+
+def ensemble_logistic(predictions_logistic_1, predictions_logistic_2, predictions_logistic_3):
+    average_predictions = (predictions_logistic_1+predictions_logistic_2+predictions_logistic_3)/3
+    return average_predictions
 
 # calculate the batch gradient for logistic regression
 def calculate_batch_gradient(y, tx, w, batchsize):

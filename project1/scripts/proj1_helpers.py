@@ -117,3 +117,30 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)] # crete the sub arrays of indices in k-intervals
     return np.array(k_indices)
+
+# standardize the data in the test set
+# should have used the same function both here and on the training part same process this is reduntant
+def standardize_test(x, mean, std):
+    """Standardize the test set."""
+    x = x - mean 
+    x = x / std
+    return x
+
+def build_poly_cov_help(degree, x):
+    res = x
+    N = x.shape[0]
+    x_transp = res[:, None]
+    temp = res
+    temp = x_transp*temp
+    nt = []
+    count = 0
+    for i in range(N):
+        nt.append(temp[i,count:].tolist())
+        count = count + 1
+    fl = [i for item in nt for i in item]
+    res = x.tolist() + fl
+    return res
+
+def build_poly_cov(x, degree = 2):
+    x = np.apply_along_axis(partial(build_poly_cov_help,degree),1,x)
+    return x
