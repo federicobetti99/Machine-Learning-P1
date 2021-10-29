@@ -144,3 +144,14 @@ def build_poly_cov_help(degree, x):
 def build_poly_cov(x, degree = 2):
     x = np.apply_along_axis(partial(build_poly_cov_help,degree),1,x)
     return x
+
+def ensemble_predictions(predictions_1, predictions_2, predictions_3):
+    average_predictions = predictions_1 + predictions_2 + predictions_3 
+    average_predictions = np.array([1 if el >= 1 else -1 for el in average_predictions])
+    return average_predictions
+
+
+
+
+
+

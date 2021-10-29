@@ -125,7 +125,7 @@ def learning_by_penalized_gradient(y, tx, w_initial, gamma, max_iters, lambda_):
 # k the set that we will use as the test set out of the subsets
 # lambda_ = the lambda for the regularization function
 # degree = the degree up to which we will exponentiate each feature
-def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
+def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma, crossing = False):
     """return the loss of ridge regression."""
     N = y.shape[0]
     k_fold = k_indices.shape[0]
@@ -136,14 +136,22 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
             list_.append(i)
     x_training = np.zeros((int((k_fold-1)/k_fold*N), x.shape[1]))
     y_training = np.zeros(int((k_fold-1)/k_fold*N))
+    column_to_add_train_0 = x_training[:, 0]
     for j in range(len(list_)):
         x_training[interval*(j):interval*(j+1), :] = x[np.array([k_indices[list_[j]]]), :]
     x_testing = x[k_indices[k], :]
+    column_to_add_test_0 = x_testing[:, 0]
     for j in range(len(list_)):
         y_training[interval*(j):interval*(j+1)] = y[np.array([k_indices[list_[j]]])]
     y_testing = y[k_indices[k]]
-    x_training_augmented = build_poly(x_training, degree)
-    x_testing_augmented = build_poly(x_testing, degree)
+    if crossing is True:
+        x_training_augmented = build_poly_cov(x_training[:,1:], degree)
+        x_testing_augmented = build_poly_cov(x_testing[:,1:], degree)
+        x_training_augmented = np.insert(x_training_augmented, 0, column_to_add_train_0, axis=1)
+        x_testing_augmented = np.insert(x_testing_augmented, 0, column_to_add_test_0, axis=1)
+    else:
+        x_training_augmented = build_poly(x_training, degree)
+        x_testing_augmented = build_poly(x_testing, degree)
     _, w_opt_training = learning_by_penalized_gradient(y_training, x_training_augmented,
                                                        np.zeros(x_training_augmented.shape[1]), gamma, 1000, lambda_)
     predictions_test = sigmoid(x_testing_augmented @ w_opt_training)
@@ -158,7 +166,7 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma):
 # k_fold = the number of splits the dataset should be split into
 # degrees = the range of the degrees to be tested for data augmentation
 # lambdas = the different lambdas that can be used as a regularization param
-def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
+def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4, crossing = False):
     seed = 3
     testing_acc = np.zeros((len(lambdas), len(degrees)))
     k_indices = build_k_indices(y, k_fold, seed)
@@ -167,7 +175,7 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
             test_acc = 0
             for k in range(k_fold):
                 current_test_acc = cross_validation_logistic(y, tX, 
-                                                            k_indices, k, lambdas[index1], degrees[index2], gamma)
+                                                            k_indices, k, lambdas[index1], degrees[index2], gamma, crossing)
                 test_acc += current_test_acc
             testing_acc[index1, index2] = test_acc / k_fold
     best_result = np.where(testing_acc == np.amax(testing_acc))
@@ -177,24 +185,31 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
     return lambda_opt[0], degree_opt[0]
 
 # calculate weights given the degree of data augmentation and the lambda_
-def optimal_weights_logistic(tX, y, gamma, degree, lambda_):
+def optimal_weights_logistic(tX, y, gamma, degree, lambda_, crossing = False):
     #Augment the feauture vector and calculate the optimal weights for logistic regression
-    tX_augmented = build_poly(tX,degree)
+    if crossing is False:
+        tX_augmented = build_poly(tX, degree)
+    if crossing is True:
+        column_to_add = tX[:,0]
+        tX_augmented = build_poly_cov(tX, degree)
+        tX_augmented = np.insert(tX_augmented, 0, column_to_add, axis=1)
     _, w_logistic = learning_by_penalized_gradient(y, tX_augmented, np.zeros(tX_augmented.shape[1]), gamma,
                                               1000, lambda_)
     return w_logistic
 
-def predict_logistic(tX, w, degree):
+def predict_logistic(tX, w, degree, crossing = False):
     # make the predictions with the augmented test set
     #since we trained the model in augmented data, we augment the test set
-    tX_augmented = build_poly(tX, degree)
+    if crossing is False:
+        tX_augmented = build_poly(tX, degree)
+    if crossing is True:
+        column_to_add = tX[:,0]
+        tX_augmented = build_poly_cov(tX, degree)
+        tX_augmented = np.insert(tX_augmented, 0, column_to_add, axis=1)
     # make the predictions with the augmented test set and logistic regression
     predictions_logistic = sigmoid(tX_augmented @ w)
+    predictions_logistic = np.array([-1 if el < 0.5 else 1 for el in predictions_logistic])
     return predictions_logistic
-
-def ensemble_logistic(predictions_logistic_1, predictions_logistic_2, predictions_logistic_3):
-    average_predictions = (predictions_logistic_1+predictions_logistic_2+predictions_logistic_3)/3
-    return average_predictions
 
 # calculate the batch gradient for logistic regression
 def calculate_batch_gradient(y, tx, w, batchsize):
