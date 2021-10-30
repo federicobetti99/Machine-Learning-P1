@@ -25,6 +25,11 @@ def load_csv_data(data_path, sub_sample=False):
     return yb, input_data, ids
 
 
+def ensemble_predictions(predictions_1, predictions_2, predictions_3):
+    average_predictions = predictions_1 + predictions_2 + predictions_3
+    average_predictions = np.array([1 if el >= 1 else -1 for el in average_predictions])
+    return average_predictions
+
 def predict_labels(weights, data):
     """Generates class predictions given weights, and a test data matrix"""
     y_pred = np.dot(data, weights)
@@ -55,6 +60,14 @@ def standardize(x):
     std_x = np.std(x, axis=0)
     x = x / std_x
     return x, mean_x, std_x
+
+# standardize the data in the test set
+# should have used the same function both here and on the training part same process this is reduntant
+def standardize_test(x, mean, std):
+    """Standardize the test set."""
+    x = x - mean
+    x = x / std
+    return x
 
 #compute accuracy of a prediction set
 def compute_accuracy(y_test, pred):
@@ -122,7 +135,7 @@ def build_k_indices(y, k_fold, seed):
 # should have used the same function both here and on the training part same process this is reduntant
 def standardize_test(x, mean, std):
     """Standardize the test set."""
-    x = x - mean 
+    x = x - mean
     x = x / std
     return x
 
@@ -146,12 +159,6 @@ def build_poly_cov(x, degree = 2):
     return x
 
 def ensemble_predictions(predictions_1, predictions_2, predictions_3):
-    average_predictions = predictions_1 + predictions_2 + predictions_3 
+    average_predictions = predictions_1 + predictions_2 + predictions_3
     average_predictions = np.array([1 if el >= 1 else -1 for el in average_predictions])
     return average_predictions
-
-
-
-
-
-
