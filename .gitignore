@@ -1,2 +1,9 @@
 train.csv
 test.csv
+submission_GD.csv
+submission_SGD.csv
+submission_LS.csv
+submission_ridge.csv
+submission_logistic.csv
+submission_reg_logistic.csv
+submission_best.csv
