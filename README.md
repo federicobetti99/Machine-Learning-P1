@@ -1,7 +1,7 @@
 # Machine-Learning-Project-1
 First Project of the Machine Learning course
 
-#File Structure
+# File Structure
 ```console
 .
 ├── Code
