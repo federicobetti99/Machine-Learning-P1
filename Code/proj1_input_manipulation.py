@@ -48,7 +48,7 @@ def create_output(tX_test, predictions_0, predictions_1, predictions_2, predicti
     stacked_predictions[one_indices] = predictions_1
     stacked_predictions[two_indices] = predictions_2
     stacked_predictions[three_indices] = predictions_3
-    return final_predictions
+    return stacked_predictions
 
 
 def alternative_split_to_Jet_Num_Help(tX):

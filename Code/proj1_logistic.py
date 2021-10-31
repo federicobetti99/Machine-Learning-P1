@@ -1,5 +1,5 @@
 import numpy as np
-from project1_helpers import *
+from proj1_helpers import *
 from implementations import *
 
 #############################################
@@ -132,7 +132,7 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma, crossi
         x_testing_augmented = build_poly(x_testing, degree)
     # we compute by iteration the vector of the optimal weights
     w_opt_training, _ = reg_logistic_regression(y_training, x_training_augmented, lambda_,
-                                                       np.zeros(x_training_augmented.shape[1]), gamma, 1000)
+                                                       np.zeros(x_training_augmented.shape[1]), 1000, gamma)
     # we do the predictions on the testing submatrix in {0,1}
     predictions_test = sigmoid(x_testing_augmented @ w_opt_training)
     predictions_test = np.array([0 if el < 0.5 else 1 for el in predictions_test])
@@ -194,8 +194,7 @@ def optimal_weights_logistic(tX, y, gamma, degree, lambda_, crossing = False):
         tX_augmented = build_poly_cov(tX, degree)
         tX_augmented = np.insert(tX_augmented, 0, column_to_add, axis=1)
     # we calculate the optimal weights by penalized gradient descent
-    w_logistic, _ = reg_logistic_regression(y, tX_augmented, lambda_, np.zeros(tX_augmented.shape[1]), gamma,
-                                              1000)
+    w_logistic, _ = reg_logistic_regression(y, tX_augmented, lambda_, np.zeros(tX_augmented.shape[1]), 1000, gamma)
     return w_logistic
 
 def predict_logistic(tX, w, degree, crossing = False):

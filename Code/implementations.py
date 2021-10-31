@@ -45,17 +45,17 @@ def ridge_regression(y, tx, lambda_):
     return w,loss
 
 # Use the gradient descent method for the
-def logistic_regression(y, tx, w_initial, gamma, max_iters):
+def logistic_regression(y, tx, w_initial, max_iters, gamma):
     w = w_initial #set initial weight for the first iteration
     for iter in range(max_iters):
-        grad = compute_gradient(y, tx, w) # calculate the gradient for a single iteration of the algorithm
+        grad = calculate_gradient(y, tx, w) # calculate the gradient for a single iteration of the algorithm
         w = w - gamma * grad # upate the weights given the gradient and the step
         if iter %25 == 0:
             gamma = gamma/2 # decrease the gamma after some iterations pass to increase the accuracy
-        loss = compute_loss(y, tx, w) # calculate loss
+        loss = calculate_loss(y, tx, w) # calculate loss
     return w, loss
 
-def reg_logistic_regression(y, tx, w_initial, gamma, max_iters, lambda_):
+def reg_logistic_regression(y, tx, lambda_, w_initial, max_iters, gamma):
     """
     Do one step of gradient descent, using the penalized logistic regression.
     Return the loss and updated w.
@@ -66,9 +66,9 @@ def reg_logistic_regression(y, tx, w_initial, gamma, max_iters, lambda_):
     iter_drop = 25
     w = w_initial
     for iter in range(max_iters):
-        grad = compute_gradient(y, tx, w) + 2*lambda_*w
+        grad = calculate_gradient(y, tx, w) + 2*lambda_*w
         w = w - gamma * grad
-        loss = compute_loss(y, tx, w) + lambda_*np.linalg.norm(w) ** 2
+        loss = calculate_loss(y, tx, w) + lambda_*np.linalg.norm(w) ** 2
         losses.append(loss)
         if iter % iter_drop == 0:
             gamma = gamma * drop ** np.floor((1+iter) / (iter_drop))

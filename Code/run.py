@@ -9,7 +9,7 @@ from proj1_linear_model import *
 from proj1_ridge_regress import *
 from proj1_logistic import *
 
-DATA_TRAIN_PATH = '../data/train.csv' # train data path here
+DATA_TRAIN_PATH = '../Data/train.csv' # train data path here
 y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 
 y_ = np.array([0 if l == -1 else 1 for l in y])
@@ -63,7 +63,7 @@ w_logistic_2_model_3 = optimal_weights_logistic(tX_tilda_2, y_2, gamma, degree=2
 w_logistic_3_model_3 = optimal_weights_logistic(tX_tilda_3, y_3, gamma, degree=2, lambda_ = 5.08512828,crossing= True)
 
 # open the test file
-DATA_TEST_PATH = '../data/test.csv' # TODO: download train data and supply path here
+DATA_TEST_PATH = '../Data/test.csv' # TODO: download train data and supply path here
 _, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
 
 tX_test_0, tX_test_1, tX_test_2, tX_test_3 = alternative_split_to_Jet_Num(tX_test)
@@ -118,6 +118,6 @@ average_predictions_3 = ensemble_predictions(predictions_ridge_3_model_1, predic
 
 final_mixed_predictions = create_output(tX_test, average_predictions_0, average_predictions_1, average_predictions_2, average_predictions_3)
 
-OUTPUT_PATH_ENSEMBLE= '../data/submission_best.csv' # name towards logistic output
+OUTPUT_PATH_ENSEMBLE= '../Data/submission_best.csv' # name towards logistic output
 
 create_csv_submission(ids_test, final_mixed_predictions, OUTPUT_PATH_ENSEMBLE) # print csv file according to ensemble results

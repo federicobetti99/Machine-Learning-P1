@@ -115,7 +115,7 @@ def compute_gradient(y, tX, w):
     """
     N = y.shape[0]
     e = y - tX @ w
-    gradient = -(1/N) * (tx.T) @ (e)
+    gradient = -(1/N) * (tX.T) @ (e)
     return gradient
 
 

@@ -64,9 +64,9 @@ def finetune_GD(tX, y, k_fold = 4, degrees = np.arange(1,5)):
         testing_acc[index] = current_sum_test / k_fold #we average them
     best_result = np.where(testing_acc == np.amax(testing_acc)) #we select the degree which maximises the accuracy
     degree_opt = degrees[best_result[0]]
-    print('the degree which maximises the accuracy is', degree_opt)
-    print('which correspond to an accuracy of', testing_acc[best_result[0]])
-    return degree_opt
+    print('the degree which maximises the accuracy is', degree_opt[0])
+    print('which correspond to an accuracy of', testing_acc[best_result[0]][0])
+    return degree_opt[0]
 
 def optimal_weights_GD(tX,y,degree):
     """
@@ -78,7 +78,7 @@ def optimal_weights_GD(tX,y,degree):
     """
     tX_augmented = build_poly(tX, degree) # we augment each feature
     #we use the function least_squares_GD to compute the optimal weights
-    w_opt_GD,_ = least_squares_GD(y, tX_augmented, np.zeros(tX_augmented.shape[1]) , 2000, 5*10e-4) 
+    w_opt_GD,_ = least_squares_GD(y, tX_augmented, np.zeros(tX_augmented.shape[1]) , 2000, 5*10e-4)
     return w_opt_GD
 
 def predict_GD(tX,w,degree=2):
@@ -87,7 +87,7 @@ def predict_GD(tX,w,degree=2):
     :param tX: the input matrix
     :param w: the optimal weghts of GD
     :param degree: the degree up to which we will exponentiate each feature
-    :return: predictions_GD: the predictions made using GD 
+    :return: predictions_GD: the predictions made using GD
     """
     # make the predictions with the augmented test set
     #since we trained the model in augmented data, we augment the test set
@@ -158,9 +158,9 @@ def finetune_SGD(tX, y, k_fold = 4, degrees = np.arange(1,5)):
         testing_acc[index] = current_sum_test / k_fold # we average them
     best_result = np.where(testing_acc == np.amax(testing_acc)) # we select the degree which maximises the accuracy
     degree_opt = degrees[best_result[0]]
-    print('the degree which maximises the accuracy is', degree_opt)
-    print('which correspond to an accuracy of', testing_acc[best_result[0]])
-    return degree_opt
+    print('the degree which maximises the accuracy is', degree_opt[0])
+    print('which correspond to an accuracy of', testing_acc[best_result[0]][0])
+    return degree_opt[0]
 
 def optimal_weights_SGD(tX, y, degree):
     """
@@ -188,5 +188,5 @@ def predict_SGD(tX, w, degree=2):
     # make the predictions with the augmented test set and GD
     predictions_SGD = tX_augmented @ w
     # we transform the labels in -1,1
-    predictions_GD = np.array([-1 if el < 0.5 else 1 for el in predictions_GD])
+    predictions_SGD = np.array([-1 if el < 0.5 else 1 for el in predictions_SGD])
     return predictions_SGD
