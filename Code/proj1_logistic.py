@@ -15,9 +15,6 @@ def calculate_hessian(y, tX, w):
     This function returns the Hessian of the logistic loss function: it is a well known fact that the Hessian can be
     factorized as tX.T @ D @ tX where D is a diagonal matrix whose i-th diagonal element is the derivative of the
     logistic function evaluated in (tX @ w)[i]
-    y:
-    tX:
-    w:
     :param y: the vector of the outputs
     :param tX: the dataset matrix
     :param w: the weights vector
