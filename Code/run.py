@@ -4,7 +4,7 @@ import math
 import random
 # Our libraries
 from proj1_helpers import *
-from proj1_input_man import *
+from proj1_input_manipulation import *
 from proj1_linear_model import *
 from proj1_ridge_regress import *
 from proj1_logistic import *
@@ -14,9 +14,9 @@ y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 
 y_ = np.array([0 if l == -1 else 1 for l in y])
 
-tX_0, tX_1, tX_2, tX_3 = alternative_split_to_Jet_Num(tX)
+tX_0, tX_1, tX_2, tX_3 = split_to_Jet_Num(tX)
 
-y_0, y_1, y_2, y_3 = alternative_split_labels_to_Jet_Num(y_, tX)
+y_0, y_1, y_2, y_3 = split_labels_to_Jet_Num(y_, tX)
 
 gamma = 0.00017783
 

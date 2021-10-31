@@ -190,3 +190,38 @@ def predict_SGD(tX, w, degree=2):
     # we transform the labels in -1,1
     predictions_SGD = np.array([-1 if el < 0.5 else 1 for el in predictions_SGD])
     return predictions_SGD
+
+#################################################
+#       Least Squares Normal Equations          #
+#       Accuracy Computation                    #
+#################################################
+
+def compute_accuracy_LS(y, x, k_indices, k):
+    """
+    The function performs cross validation for least squares normal equations in order to give us a sample accuracy for this method
+    :param y: the labels of the training set
+    :param x: the feature matrix of the training set
+    :param k_indices:  random subsets of indices of the original samples
+    :param k: the index such that k_indices[k] will be the set to use as the test set out of the subsets
+    :return: The accuracy computed for the given degree using k_indices[k] as the indices of test set
+    """
+    N = y.shape[0]
+    k_fold = k_indices.shape[0]
+    list_ = []
+    interval = int(N/k_fold)
+    for i in range(k_fold):
+        if i != k:
+            list_.append(i)
+    x_training = np.zeros((int((k_fold-1)/k_fold*N), x.shape[1]))
+    y_training = np.zeros(int((k_fold-1)/k_fold*N))
+    for j in range(len(list_)):
+        x_training[interval*(j):interval*(j+1), :] = x[np.array([k_indices[list_[j]]]), :]
+    x_testing = x[k_indices[k], :]
+    for j in range(len(list_)):
+        y_training[interval*(j):interval*(j+1)] = y[np.array([k_indices[list_[j]]])]
+    y_testing = y[k_indices[k]]
+    w_opt_training,_ = least_squares(y_training, x_training)
+    predictions_test = x_testing@w_opt_training
+    predictions_test = np.array([0 if el <0.5 else 1 for el in predictions_test])
+    acc_test = compute_accuracy(y_testing, predictions_test)
+    return acc_test

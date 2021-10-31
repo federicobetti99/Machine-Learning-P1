@@ -221,6 +221,36 @@ def predict_logistic(tX, w, degree, crossing = False):
     predictions_logistic = np.array([-1 if el < 0.5 else 1 for el in predictions_logistic])
     return predictions_logistic
 
+def reg_logistic_regression_plot(y, tx_training, lambda_, w_initial, gamma, max_iters):
+    """
+    The main use of this function is to return a slightly altered result to facilitate the plots
+    :param y: the output of vectors
+    :param tx: the dataset matrix
+    :param w_initial: the initial weights to start the descent algorithm
+    :param gamma: the learning rate or step size
+    :param max_iters: the maximum number of iterations
+    :param lambda_: the regularization parameter
+    :return: the weights at the iteration max_iters or when the algorithm stops by convergence criterion and the set of training losses
+    """
+    threshold = 1e-8
+    train_losses = []
+    test_losses = []
+    drop = 0.5
+    iter_drop = 25
+    w = w_initial
+    for iter in range(max_iters):
+        grad = calculate_gradient(y, tx_training, w) + 2 * lambda_ * w
+        w = w - gamma * grad
+        train_loss = calculate_loss(y, tx_training, w) + lambda_ * np.linalg.norm(w) ** 2
+        train_losses.append(train_loss)
+        if iter % iter_drop == 0:
+            gamma = gamma * drop ** np.floor((1+iter) / (iter_drop))
+            #print("Current iteration={i}, loss={l}".format(i=iter, l=loss))
+        # converge criterion
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+    return w, train_losses
+
 # calculate the batch gradient for logistic regression
 def calculate_batch_gradient(y, tx, w, batchsize):
     """

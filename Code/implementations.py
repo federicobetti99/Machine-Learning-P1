@@ -3,7 +3,7 @@ from proj1_helpers import *
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     w = initial_w # Initialization of the weights
-    loss = 50000000
+    loss = None
     for n_iter in range(max_iters):
         loss = compute_loss(y,tx,w) # calculate the MSE loss
         gradient = compute_gradient(y,tx,w) # calculate the gradient
@@ -15,7 +15,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 # gamma = the step of the function in the direction of the gradient
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     w = initial_w # intialize the weights for the first iteration
-    loss=50000000
+    loss=None
     for n_iter in range(max_iters):
         loss = compute_loss(y,tx,w) # compute MSE loss for all samples
         stoch_gradient = compute_stoch_gradient(y,tx,w) # calculate stochastic gradient

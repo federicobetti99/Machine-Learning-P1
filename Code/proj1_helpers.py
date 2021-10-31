@@ -118,7 +118,6 @@ def compute_gradient(y, tX, w):
     gradient = -(1/N) * (tX.T) @ (e)
     return gradient
 
-
 def compute_stoch_gradient(y, tX, w):
     """
     Returns a random component of the gradient vector of the MSE loss function as a function of the weights
@@ -136,6 +135,14 @@ def compute_stoch_gradient(y, tX, w):
     random_gradient = - np.dot(xn, y[random_number] - np.dot(xn,w))
     return random_gradient
 
+def circular(num):
+    '''
+    Circular iteration function used to create a circular list out of a normal one
+    :param num: the list to be turned circular
+    '''
+    while True:
+        for sample in num:
+            yield sample
 ###############################################
 #        sigmoid                              #
 ###############################################

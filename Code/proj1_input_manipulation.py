@@ -42,7 +42,7 @@ def create_output(tX_test, predictions_0, predictions_1, predictions_2, predicti
     # we construct a vector of the right dimension for the final predictions
     stacked_predictions = np.zeros(tX_test.shape[0])
     # we find the indices which have 0,1,2 or 3 Pri-Jets number
-    zero_indices, one_indices, two_indices, three_indices = alternative_split_to_Jet_Num_Help(tX_test)
+    zero_indices, one_indices, two_indices, three_indices = split_to_Jet_Num_Help(tX_test)
     # we insert in the vector of the final predictions the predictions for each submatrix in the right place
     stacked_predictions[zero_indices] = predictions_0
     stacked_predictions[one_indices] = predictions_1
@@ -51,7 +51,7 @@ def create_output(tX_test, predictions_0, predictions_1, predictions_2, predicti
     return stacked_predictions
 
 
-def alternative_split_to_Jet_Num_Help(tX):
+def split_to_Jet_Num_Help(tX):
     """
     This functions return the indices corresponding to the rows of tX where the Pri-jet-number is equal to
     zero, one, two or three respectively
@@ -69,7 +69,7 @@ def alternative_split_to_Jet_Num_Help(tX):
     return zero_indices, one_indices, two_indices, three_indices
 
 
-def alternative_split_to_Jet_Num(tX):
+def split_to_Jet_Num(tX):
     """
     The function create the four submatrices from the big initial matrix tX. Each of the submarix contains only the
     rows of tX such that the pri-jet-num is equal to zero, one, two or three respectively
@@ -77,7 +77,7 @@ def alternative_split_to_Jet_Num(tX):
     :return: tX_0,tX_1,tX_2,tX_3 the three submatrices
     """
     # we use the funtion alternative_split_to_Jet_Num_Help to have the indices of the rows to put in each submatrix
-    zero_indices, one_indices, two_indices, three_indices = alternative_split_to_Jet_Num_Help(tX)
+    zero_indices, one_indices, two_indices, three_indices = split_to_Jet_Num_Help(tX)
     # for each group of indices, we construct the submatrix and we drop the column corresponding to the pri-jet number
     # we drop the column because it will not convey any useful information when we construct 4 different models
     tX_0 = tX[zero_indices, :]
@@ -91,7 +91,7 @@ def alternative_split_to_Jet_Num(tX):
     return tX_0, tX_1, tX_2, tX_3
 
 
-def alternative_split_labels_to_Jet_Num(y, tX):
+def split_labels_to_Jet_Num(y, tX):
     """
     The function split the labels in four groups, each of them contains the label corresponding to the four
     submatrices created before
@@ -100,7 +100,7 @@ def alternative_split_labels_to_Jet_Num(y, tX):
     :return: y_0,y_1,y_2,y_3 the four vectors of labels corresponding to the four submatrices
     """
     # we use the funtion alternative_split_to_Jet_Num_Help to have the indices of the rows to put in each submatrix
-    zero_indices, one_indices, two_indices, three_indices = alternative_split_to_Jet_Num_Help(tX)
+    zero_indices, one_indices, two_indices, three_indices = split_to_Jet_Num_Help(tX)
     # using these indices we construct the four vectors of labels
     y_0 = y[zero_indices]
     y_1 = y[one_indices]
