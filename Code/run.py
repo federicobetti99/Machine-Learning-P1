@@ -118,6 +118,6 @@ average_predictions_3 = ensemble_predictions(predictions_ridge_3_model_1, predic
 
 final_mixed_predictions = create_output(tX_test, average_predictions_0, average_predictions_1, average_predictions_2, average_predictions_3)
 
-OUTPUT_PATH_ENSEMBLE= '../data/submission_ensemble.csv' # name towards logistic output
+OUTPUT_PATH_ENSEMBLE= '../data/submission_best.csv' # name towards logistic output
 
 create_csv_submission(ids_test, final_mixed_predictions, OUTPUT_PATH_ENSEMBLE) # print csv file according to ensemble results
