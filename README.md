@@ -26,17 +26,17 @@ First Project of the Machine Learning course
 ├── README.md
 └── Report.pdf
 ```
-##Code
+## Code
 
 The code folder contains all the python files as well as all the jupyter notebooks. 
 
-##Data
+## Data
 
 The data folder.<br>
 It currently contains a single zip **data.zip** file which includes the **test.csv** and the **train.csv**.<br>
 Open the zip inside that folder in order to execute the programs <br>
 All the programs outputs(**the created csvs**) are placed in this folder in order for them to be arranged neatly.
 
-###Report.pdf
+### Report.pdf
 
 The two page report with an extensive explanation of our work, our thought process, our results and our conclusions.
