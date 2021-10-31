@@ -18,9 +18,10 @@ from implementations import *
 # lambda_ = the lambda for the regularization function
 # degree = the degree up to which we will exponentiate each feature
 
+#for further clarifications please take a look at cross_validation_logistic
 def cross_validation_ridge(y, x, k_indices, k, lambda_, degree,crossing = False):
     """
-    The function performs cross validation selecting the best hyoerparameters for ridge regression namely lambda_ 
+    The function performs cross validation selecting the best hyoerparameters for ridge regression namely lambda_
     (the regulatization coefficient) and degree (the degree used for feature expansion)
     param y: the labels
     param x: the training matrix
@@ -87,7 +88,7 @@ def finetune_ridge(tX, y, k_fold = 5, degrees = np.arange(2, 7), lambdas = np.lo
     param lambdas: the coefficients of the regularization term (we are doing cross validation on this hyperparameter)
     param crossing: if crossing =True we will do crossing feature expansion of degree 2 (if we have x,y,z as the features
     we will expand as x,y,z,xy,xz,yz,x^2,y^2,z^2) if it is false we will expand using a polynomial expansion of degree=degree
-    return: The hyperparameters lambda_opt, degree_opt which maximizes the validation accuracy 
+    return: The hyperparameters lambda_opt, degree_opt which maximizes the validation accuracy
     """
     seed = 1 # initialise the seed for the randomizer
     testing_acc = np.zeros((len(lambdas), len(degrees)))# initial 2-d array for the search or the lambads and the degrees
@@ -95,11 +96,11 @@ def finetune_ridge(tX, y, k_fold = 5, degrees = np.arange(2, 7), lambdas = np.lo
     for index1 in range(len(lambdas)):
         for index2 in range(len(degrees)):
             current_sum_test = 0 # we will sum the test accuracies and we will average them to get the average test
-            # accuracy 
+            # accuracy
             #run the cross validation for each possible split into test-train
             for k in range(k_fold):
                 current_test_acc = cross_validation_ridge(y, tX, k_indices, k,
-                                                    lambdas[index1], degrees[index2], crossing) 
+                                                    lambdas[index1], degrees[index2], crossing)
                 current_sum_test += current_test_acc # we increase the sum of the accuracy that we will later average
             testing_acc[index1, index2] = current_sum_test / k_fold # save the average of the test_accuracy
     best_result = np.where(testing_acc == np.amax(testing_acc)) # get the optimal index for the hyper parameters
@@ -117,16 +118,16 @@ def optimal_weights_ridge(tX, y, degree, lambda_, crossing = False):
     param y: the labels
     param degree: the degree up to which we will exponentiate each feature
     param lambda_: the coefficient of the regularization term
-    param crossing: if crossing =True we will do crossing feature expansion of degree 2 (for example if we have x,y,z 
+    param crossing: if crossing =True we will do crossing feature expansion of degree 2 (for example if we have x,y,z
     as the features we will expand as x,y,z,xy,xz,yz,x^2,y^2,z^2) if it is false we will expand using a
     polynomial expansion of degree=degree
-    return w_ridge: the best weights for ridge regression model 
+    return w_ridge: the best weights for ridge regression model
     """
     if crossing is False:
         tX_augmented = build_poly(tX, degree) #if it is false we do polynomial feature expansion
     if crossing is True: #if it is true we do crossing feature expansion
         column_to_add = tX[:,0] #we will expand everything a part from the column of ones (bias column)
-        tX_augmented = build_poly_cov(tX, degree) 
+        tX_augmented = build_poly_cov(tX, degree)
         tX_augmented = np.insert(tX_augmented, 0, column_to_add, axis=1) #we re-add the column of the bias term
     w_ridge,_ = ridge_regression(y, tX_augmented, lambda_)
     return w_ridge
@@ -137,7 +138,7 @@ def predict_ridge(tX, w, degree, crossing = False):
     param tX: the test matrix
     param w: the weights of the ridge regression model
     param degree: the degree up to which we will exponentiate each feature
-    param crossing: if crossing =True we will do crossing feature expansion of degree 2 (for example if we have x,y,z 
+    param crossing: if crossing =True we will do crossing feature expansion of degree 2 (for example if we have x,y,z
     as the features we will expand as x,y,z,xy,xz,yz,x^2,y^2,z^2) if it is false we will expand using a
     polynomial expansion of degree=degree
     return predictions_ridge: the predictions for the ridge regression model

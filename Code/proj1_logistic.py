@@ -299,6 +299,7 @@ def learning_by_penalized_batch_gradient(y, tx, w_initial, gamma, max_iters, lam
     final_loss = losses[-1]
     return w, final_loss
 
+#for further clarifications please take a look at cross_validation_logistic
 def cross_validation_logistic_batch(y, x, k_indices, k, lambda_, degree, gamma):
     """
     This function performs the cross validation on the stochastic gradient descent for the regularized logistic regression

@@ -7,6 +7,7 @@ from implementations import *
 #          Gradient Descent                  #
 ##############################################
 
+#for further clarifications please take a look at cross_validation_logistic
 def cross_validation_GD(y, x, k_indices, k, degree, gamma):
     """
     The function performs cross validation for gradient descent in order to set the best degree for feature augmentation
@@ -102,7 +103,7 @@ def predict_GD(tX,w,degree=2):
 ###########################################################
 #       Stochastic Gradient Descent                       #
 ###########################################################
-
+#for further clarifications please take a look at cross_validation_logistic
 def cross_validation_SGD(y, x, k_indices, k, degree, gamma):
     """
     The function performs cross validation for stochastic gradient descent in order to set the best degree for feature augmentation
