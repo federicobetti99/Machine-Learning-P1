@@ -1,6 +1,6 @@
 # Files
 In this directory we have the following files:
-### implementations.py
+## implementations.py
 
 This file includes the following functions:<br>
 
@@ -22,12 +22,12 @@ The implementation for logistic regression using the gradient descent method.
 #### reg_logistic_regression(y, tx, lambda ,initial_w, max_iters, gamma)
 The implementation for regularized logistic regression using the gradient descent method
 
-### run.py
+## run.py
 This script creates the csv which we used to submit to aircrowd and get an accuracy of 0.817, using our best model.<br>
 The model is an ensemble of two ridge regressions and a logistic one.We train these models seperately.<br>
 Then we parse the test samples with each model seperately and we utilize a hard voting scheme in order to combine the predictions in favor of the majority.
 
-### Helper Files
+## Helper Files
 The Code directory also contains several helper files which hold functions that are essential for our project. Namely We have the following files:
 
 #### proj1_helpers.py
@@ -87,7 +87,7 @@ This file contains functions essential for the hyperparameter fitting of our mod
 3.**optimal_weights_logistic** This function given all the hyperparameters and the training samples, computes the optimal weights, for this method.<br>
 4.**predict_logistic**This function given some weights and an augmentation degree, makes a prediction for the logistic model.
 
-### Notebook Executions
+## Notebook Executions
 The code directory also contains seperate notebooks, one for each function we were required to implement.By executing the corresponding notebook you can see the hyperparameter fitting for that process and you will also create the corresponding output file in the **Data** folder.Namely we have the following files:
 1.**run_grad.ipynb** Executes a notebook that fits the parameters with the Gradient Descent Method for the linear model and makes the relative predictions.<br>
 2.**run_stochastic_grad.ipynb** Executes a notebook that fits the parameters with the Stochastic Gradient Descent Method for the linear model and makes the relative predictions.<br>
