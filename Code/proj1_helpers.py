@@ -18,47 +18,6 @@ def ensemble_predictions(predictions_1, predictions_2, predictions_3):
     return average_predictions
 
 
-def create_csv_submission(ids, y_pred, name):
-    """
-    Creates an output file in .csv format for submission to Kaggle or AIcrowd
-    :param ids: event ids associated with each prediction
-    :param y_pred:  predicted class labels
-    :param name: string name of .csv output file to be created
-    :return: 0
-    """
-    with open(name, 'w') as csvfile:
-        fieldnames = ['Id', 'Prediction']
-        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
-        writer.writeheader()
-        for r1, r2 in zip(ids, y_pred):
-            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
-
-
-def standardize(x):
-    """
-    Standardize the original data set.
-    :param x: the dataset to standardize
-    :return: the dataset standardized with mean 0 and variance 1
-    """
-    mean_x = np.mean(x, axis=0)
-    x = x - mean_x
-    std_x = np.std(x, axis=0)
-    x = x / std_x
-    return x, mean_x, std_x
-
-
-def standardize_test(x, mean, std):
-    """
-    Standardize the test set using the mean and standard deviation of the clusters of the training.
-    :param x: the dataset matrix to be standardized in each entry
-    :param mean: the mean of the training corresponding cluster
-    :param std: the standard deviation of the training corresponding cluster
-    :return: the test dataset standardized with mean 0 and variance 1
-    """
-    x = x - mean
-    x = x / std
-    return x
-
 ##############################################
 #       Loss + Gradient Calculators          #
 #       Linear Model                         #
@@ -203,35 +162,6 @@ def build_poly(x, degree):
         phi = np.column_stack([phi, phi_i])
     return phi
 
-
-def random_interval(low, high, size):
-    """
-    Returns a sample of values for randomized grid search in the interval [low, high]
-    low: lower bound of the interval of grid search of the optimal hyper-parameters
-    high: upper bound of the interval of grid search of the optimal hyper-parameters
-    size: size of the sample
-    """
-    sample = np.random.uniform(low, high, size)
-    return sample
-
-
-def build_k_indices(y, k_fold, seed):
-    """
-    This function constructs the indices to be used in cross-validation
-    :param y: the output vector
-    :param k_fold: the number of subsets one wants to split each feature into
-    :param seed: the random seed used to perform the splitting
-    :return: an array containing the shuffled indices between 0 and N
-    """
-    N = y.shape[0] # number of samples
-    np.random.seed(seed) # initialize random seed
-    interval = int(np.floor(N / k_fold)) # number of samples in each subset
-    indices = np.random.permutation(N) # return an array of rnadomly order indices in [0,N)
-    k_indices = [indices[k * interval: (k + 1) * interval]
-                 for k in range(k_fold)] # crete the sub arrays of indices in k-intervals
-    return np.array(k_indices)
-
-
 def build_poly_cov_help(degree, x):
     """
     This function is a helper to construct the crossing feature expansion
@@ -263,3 +193,30 @@ def build_poly_cov(x, degree = 2):
     """
     x = np.apply_along_axis(partial(build_poly_cov_help, degree), 1, x)
     return x
+
+def random_interval(low, high, size):
+    """
+    Returns a sample of values for randomized grid search in the interval [low, high]
+    low: lower bound of the interval of grid search of the optimal hyper-parameters
+    high: upper bound of the interval of grid search of the optimal hyper-parameters
+    size: size of the sample
+    """
+    sample = np.random.uniform(low, high, size)
+    return sample
+
+
+def build_k_indices(y, k_fold, seed):
+    """
+    This function constructs the indices to be used in cross-validation
+    :param y: the output vector
+    :param k_fold: the number of subsets one wants to split each feature into
+    :param seed: the random seed used to perform the splitting
+    :return: an array containing the shuffled indices between 0 and N
+    """
+    N = y.shape[0] # number of samples
+    np.random.seed(seed) # initialize random seed
+    interval = int(np.floor(N / k_fold)) # number of samples in each subset
+    indices = np.random.permutation(N) # return an array of rnadomly order indices in [0,N)
+    k_indices = [indices[k * interval: (k + 1) * interval]
+                 for k in range(k_fold)] # crete the sub arrays of indices in k-intervals
+    return np.array(k_indices)

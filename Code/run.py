@@ -106,11 +106,6 @@ predictions_logistic_1_model_3 = predict_logistic(tX_tilda_test_1, w_logistic_1_
 predictions_logistic_2_model_3 = predict_logistic(tX_tilda_test_2, w_logistic_2_model_3, 2, True)
 predictions_logistic_3_model_3 = predict_logistic(tX_tilda_test_3, w_logistic_3_model_3, 2, True)
 
-def ensemble_predictions(predictions_1, predictions_2, predictions_3):
-    average_predictions = predictions_1 + predictions_2 + predictions_3
-    average_predictions = np.array([1 if el >= 1 else -1 for el in average_predictions])
-    return average_predictions
-
 average_predictions_0 = ensemble_predictions(predictions_ridge_0_model_1, predictions_ridge_0_model_2, predictions_logistic_0_model_3)
 average_predictions_1 = ensemble_predictions(predictions_ridge_1_model_1, predictions_ridge_1_model_2, predictions_logistic_1_model_3)
 average_predictions_2 = ensemble_predictions(predictions_ridge_2_model_1, predictions_ridge_2_model_2, predictions_logistic_2_model_3)

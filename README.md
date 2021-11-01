@@ -12,7 +12,6 @@ First Project of the Machine Learning course
 │   ├── proj1_logistic.py
 │   ├── proj1_ridge_regress.py
 │   ├── README.md
-│   ├── run_all_models.ipynb
 │   ├── run_grad.ipynb
 │   ├── run_least_squares.ipynb
 │   ├── run_logistic.ipynb
@@ -28,14 +27,15 @@ First Project of the Machine Learning course
 ```
 ## Code
 
-The code folder contains all the python files as well as all the jupyter notebooks. 
+The code folder contains all the python files as well as all the jupyter notebooks. For more information read the corresponding **README.md** file in that directory.
 
 ## Data
 
 The data folder.<br>
 It currently contains a single zip **data.zip** file which includes the **test.csv** and the **train.csv**.<br>
 Open the zip inside that folder in order to execute the programs <br>
-All the programs outputs(**the created csvs**) are placed in this folder in order for them to be arranged neatly.
+All the programs outputs(**the created csvs**) are placed in this folder in order for them to be arranged neatly.<br>
+For more information read the corresponding **README.md** file in that directory.
 
 ### Report.pdf
 

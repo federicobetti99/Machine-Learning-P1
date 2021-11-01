@@ -169,8 +169,9 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4, crossing = Fals
     # the optimal lambda and degree for our logistic regression model are recovered and returned by the function
     lambda_opt, degree_opt = lambdas[best_result[0]], degrees[best_result[1]]
     # this print are only for visualization of the best accuracy for each submodel in the cluster
-    print(lambda_opt, degree_opt)
-    print(np.amax(testing_acc))
+    print("The Optimal λ is:", lambda_opt[0])
+    print("The Optimal Augmentation Degree is:",degree_opt[0])
+    print("The Accuracy is the Validation Set for these parameters is:",np.amax(testing_acc))
     return lambda_opt[0], degree_opt[0]
 
 def optimal_weights_logistic(tX, y, gamma, degree, lambda_, crossing = False):
@@ -221,7 +222,7 @@ def predict_logistic(tX, w, degree, crossing = False):
     predictions_logistic = np.array([-1 if el < 0.5 else 1 for el in predictions_logistic])
     return predictions_logistic
 
-def reg_logistic_regression_plot(y, tx_training, lambda_, w_initial, gamma, max_iters):
+def reg_logistic_regression_plot(y_training, y_testing, tx_training, tx_testing, lambda_, w_initial, gamma, max_iters):
     """
     The main use of this function is to return a slightly altered result to facilitate the plots
     :param y: the output of vectors
@@ -239,17 +240,19 @@ def reg_logistic_regression_plot(y, tx_training, lambda_, w_initial, gamma, max_
     iter_drop = 25
     w = w_initial
     for iter in range(max_iters):
-        grad = calculate_gradient(y, tx_training, w) + 2 * lambda_ * w
+        grad = calculate_gradient(y_training, tx_training, w) + 2 * lambda_ * w
         w = w - gamma * grad
-        train_loss = calculate_loss(y, tx_training, w) + lambda_ * np.linalg.norm(w) ** 2
+        train_loss = calculate_loss(y_training, tx_training, w) + lambda_ * np.linalg.norm(w) ** 2
+        testing_loss = calculate_loss(y_testing, tx_testing, w) + lambda_ * np.linalg.norm(w) ** 2
         train_losses.append(train_loss)
+        test_losses.append(testing_loss)
         if iter % iter_drop == 0:
             gamma = gamma * drop ** np.floor((1+iter) / (iter_drop))
             #print("Current iteration={i}, loss={l}".format(i=iter, l=loss))
         # converge criterion
-        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+        if len(train_losses) > 1 and np.abs(train_losses[-1] - train_losses[-2]) < threshold:
             break
-    return w, train_losses
+    return w, train_losses,test_losses
 
 # calculate the batch gradient for logistic regression
 def calculate_batch_gradient(y, tx, w, batchsize):

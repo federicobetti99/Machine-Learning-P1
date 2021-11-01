@@ -26,6 +26,20 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def create_csv_submission(ids, y_pred, name):
+    """
+    Creates an output file in .csv format for submission to Kaggle or AIcrowd
+    :param ids: event ids associated with each prediction
+    :param y_pred:  predicted class labels
+    :param name: string name of .csv output file to be created
+    :return: 0
+    """
+    with open(name, 'w') as csvfile:
+        fieldnames = ['Id', 'Prediction']
+        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
+        for r1, r2 in zip(ids, y_pred):
+            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
 def create_output(tX_test, predictions_0, predictions_1, predictions_2, predictions_3):
     """
@@ -50,6 +64,29 @@ def create_output(tX_test, predictions_0, predictions_1, predictions_2, predicti
     stacked_predictions[three_indices] = predictions_3
     return stacked_predictions
 
+def standardize(x):
+    """
+    Standardize the original data set.
+    :param x: the dataset to standardize
+    :return: the dataset standardized with mean 0 and variance 1
+    """
+    mean_x = np.mean(x, axis=0)
+    x = x - mean_x
+    std_x = np.std(x, axis=0)
+    x = x / std_x
+    return x, mean_x, std_x
+
+def standardize_test(x, mean, std):
+    """
+    Standardize the test set using the mean and standard deviation of the clusters of the training.
+    :param x: the dataset matrix to be standardized in each entry
+    :param mean: the mean of the training corresponding cluster
+    :param std: the standard deviation of the training corresponding cluster
+    :return: the test dataset standardized with mean 0 and variance 1
+    """
+    x = x - mean
+    x = x / std
+    return x
 
 def split_to_Jet_Num_Help(tX):
     """
