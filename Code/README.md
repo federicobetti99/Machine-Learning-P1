@@ -11,7 +11,7 @@ The implementation for linear regression using the gradient descent method with 
 The implementation for linear regression using the stochastic gradient descent method with mean squared error as the optimization function.
 
 #### least_squares(y, tx)
-The implementation for linear regression using normal equations derived by using the mean squared error, as an optimization function.
+The implementation for linear regression using normal equations derived by using the mean squared error as an optimization function.
 
 #### ridge_regression(y, tx, lambda )
 The implementation for ridge regression.
@@ -41,8 +41,8 @@ This file contains essential helper functions,required by numerous files:<br><br
 7.**calculate_gradient** calculates the gradient for the logistic regression model<br>
 8.**compute_accuracy** computes the accuracy of a model given its predictions and the ground truth labels<br>
 9.**build_poly** augments a feature vector by adding all the powers of every feature up to a given degree.<br>
-10.**build_poly_cov_help** computes the cross feature expansion of degree 2, of a certain sample.<br>
-11.**build_poly_cov** computes the cross feature expansion of a certain feature vector.<br>
+10.**build_poly_cov_help** computes the feature crosses of degree 2 of a certain sample.<br>
+11.**build_poly_cov** computes the feature crosses of a certain feature vector.<br>
 12.**random_interval** calculates a number of random values within the specified interval.<br>
 13.**build_k_indices** build the shuffled subvectors required for cross validation
 
@@ -59,39 +59,39 @@ This file contains essential helper functions, required for input manipulation a
 9.**find_mass** Seperate the indices with uncalculated mass with an additional column of 0s and 1s.<br>
 10.**fix_array** Replaces the outliers of each columns and can delete invalid columns.<br>
 11.**fix_median** This function replaces invalid values with the corresponding median.<br>
-12.**fix_median_test** This function replaces invalid values in a test set with the corresponding given median.
+12.**fix_median_test** This function replaces invalid values in a test set with the corresponding given median (should be used with the median of the train set).
 
 #### proj1_linear_model.py
 This file contains functions essential for the hyperparameter fitting of our models for linear regression:<br><br>
-1.**cross_validation_GD** This function conducts cross validation for a given set of hyperparameters for the linear model, for the gradient descent method.<br>
+1.**cross_validation_GD** This function conducts cross validation for given values of hyperparameters for the linear model, using the gradient descent method.<br>
 2.**finetune_GD** This function takes a hyperparameter vector for the degree and finds the best hyperparameter out of the given ones<br>
-3.**optimal_weights_GD** This function given all the hyperparameters and the training samples, computes the optimal weights, for this method.<br>
-4.**predict_GD** This function given some weights and an augmentation degree, makes a prediction for the linear model.<br>
-5.**cross_validation_SGD** This function conducts cross validation for a given set of hyperparameters for the linear model, for the stochastic gradient descent method.<br>
+3.**optimal_weights_GD** This function, given all the hyperparameters and the training samples, computes the optimal weights for this method.<br>
+4.**predict_GD** This function, given some weights and an augmentation degree, makes a prediction for the linear model.<br>
+5.**cross_validation_SGD** This function conducts cross validation for given values of hyperparameters for the linear model, using the stochastic gradient descent method.<br>
 6.**finetune_SGD** This function takes a hyperparameter vector for the degree and finds the best hyperparameter out of the given ones<br>
-7.**optimal_weights_SGD** This function given all the hyperparameters and the training samples, computes the optimal weights, for this method.<br>
-8.**predict_SGD** This function given some weights and an augmentation degree, makes a prediction for the linear model.<br>
-9.**compute_accuracy_LS** This function uses the cross validation technique to compute sample accuracies for the least squares method for the linear model.
+7.**optimal_weights_SGD** This function, given all the hyperparameters and the training samples, computes the optimal weights for this method.<br>
+8.**predict_SGD** This function, given some weights and an augmentation degree, makes a prediction for the linear model.<br>
+9.**compute_accuracy_LS** This function uses the cross validation technique to compute sample accuracies for the least squares method.
 
 #### proj1_ridge_regress.py
 This file contains functions essential for the hyperparameter fitting of our models for ridge regression:<br><br>
-1.**cross_validation_ridge** This function conducts cross validation for a given set of hyperparameters for ridge regression.<br>
+1.**cross_validation_ridge** This function conducts cross validation for given values of hyperparameters for ridge regression.<br>
 2.**finetune_ridge** This function takes a hyperparameter vector for the degree and a vector for the lambda and finds the best hyperparameters out of the given ones<br>
-3.**optimal_weights_ridge** This function given all the hyperparameters and the training samples, computes the optimal weights, for this method.<br>
-4.**predict_ridge** This function given some weights and an augmentation degree, makes a prediction for the linear model.
+3.**optimal_weights_ridge** This function ,given all the hyperparameters and the training samples, computes the optimal weights for this method.<br>
+4.**predict_ridge** This function, given some weights and an augmentation degree, makes a prediction for the linear model.
 
 #### proj1_logistic.py
 This file contains functions essential for the hyperparameter fitting of our models for logistic regression:<br><br>
-1.**cross_validation_logistic** This function conducts cross validation for a given set of hyperparameters for regularized logistic regression.<br>
+1.**cross_validation_logistic** This function conducts cross validation for given values of hyperparameters for regularized logistic regression.<br>
 2.**finetune_logistic** This function takes a hyperparameter vector for the degree and a vector for the lambda and finds the best hyperparameters out of the given ones.<br>
-3.**optimal_weights_logistic** This function given all the hyperparameters and the training samples, computes the optimal weights, for this method.<br>
-4.**predict_logistic**This function given some weights and an augmentation degree, makes a prediction for the logistic model.<br>
+3.**optimal_weights_logistic** This function, given all the hyperparameters and the training samples, computes the optimal weights for this method.<br>
+4.**predict_logistic**This function, given some weights and an augmentation degree, makes a prediction for the logistic model.<br>
 5.**reg_logistic_regression_plot** Given a test set and a train set the function fits the regularized logistic regression parameters on the train set and it calculates the loss over each iteration for both the test set and the train set. Then it returns the two loss vectors.<br>
 6.**calculate_batch_gradient** Calculate the logistic regression gradient for a batch.(**Not used**)<br>
 7.**learning_by_penalized_batch_gradient** The implementation for regularized logistic regression using the gradient descent method with a batch for each iteration instead of the whole dataset.(**Not used**)<br>
-8.**cross_validation_logistic_batch**This function conducts cross validation for a given set of hyperparameters for regularized logistic regression, using the batch gradient descent method.(**Not used**)<br>
+8.**cross_validation_logistic_batch**This function conducts cross validation for given values of hyperparameters for regularized logistic regression, using the batch gradient descent method.(**Not used**)<br>
 9.**finetune_batch_logistic**This function takes a hyperparameter vector for the degree and a vector for the lambda and finds the best hyperparameters out of the given ones. It uses a batch gradient descent method.(**Not used**)<br>
-10.**calculate Hessian** Calculates the Hessian of a matrix(**Not used**)<br>
+10.**calculate Hessian** Calculates the Hessian of the logistic function loss(**Not used**)<br>
 11.**logistic_regression_compute** Returns the loss, the gradient and the Hessian(**Not used**)<br>
 12.**learning_by_newton_method** One step of newton method returns new weights and current loss(**Not used**)<br>
 13.**penalized_logistic_regression** Calculates the loss, the gradient and the Hessian for the regularized model.(**Not used**)
