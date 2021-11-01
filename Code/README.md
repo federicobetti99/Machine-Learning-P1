@@ -23,7 +23,7 @@ The implementation for logistic regression using the gradient descent method.
 The implementation for regularized logistic regression using the gradient descent method
 
 ## run.py
-This script creates the csv which we used to submit to aircrowd and get an accuracy of 0.817, using our best model.<br>
+This script creates the csv which we used to submit to aircrowd and get an accuracy of 0.818, using our best model.<br>
 The model is an ensemble of two ridge regressions and a logistic one.We train these models seperately.<br>
 Then we parse the test samples with each model seperately and we utilize a hard voting scheme in order to combine the predictions in favor of the majority.
 
