@@ -2,81 +2,6 @@ import numpy as np
 from proj1_helpers import *
 from implementations import *
 
-#############################################
-#        newton method                      #
-#############################################
-############################################
-# The following functions are not part of  #
-# any implementation                       #
-############################################
-
-def calculate_hessian(y, tX, w):
-    """
-    This function returns the Hessian of the logistic loss function: it is a well known fact that the Hessian can be
-    factorized as tX.T @ D @ tX where D is a diagonal matrix whose i-th diagonal element is the derivative of the
-    logistic function evaluated in (tX @ w)[i]
-    :param y: the vector of the outputs
-    :param tX: the dataset matrix
-    :param w: the weights vector
-    :return: the Hessian of the loss associated to the logistic function calculated in w
-    """
-    diag = sigmoid(tX @ w) * (1 - sigmoid(tX @ w))
-    D = diag * np.eye(tX.shape[0])
-    return np.transpose(tX) @ D @ tX
-
-
-def logistic_regression_compute(y, tX, w):
-    """
-    This function calculates the main quantities used in the logistic regression framework
-    :param y: the vector of the outputs
-    :param tX: the dataset matrix
-    :param w: the weights vector
-    :return: the loss, the gradient and the Hessian calculated in the previous functions above
-    """
-    grad = compute_gradient(y, tX, w)
-    hess = calculate_hessian(y, tX, w)
-    loss = compute_loss(y, tX, w)
-    return loss, grad, hess
-
-def learning_by_newton_method(y, tx, w, gamma):
-    """
-    This function implements the Newton Method, i.e. the standard gradient descent is modified as the
-    iterative descent algorithm now follows the direction of the gradient subject to the affine transformation
-    performed by the second order geometry of the system
-    :param y: the vector of the outputs
-    :param tx: the dataset matrix
-    :param w: the weights vector
-    :param gamma: the learning rate
-    :return: the loss and the weights calculated after one iteration of the Newton's Method for the logistic regression
-    """
-    loss, grad, hess = logistic_regression_compute(y, tx, w)
-    sol = np.linalg.solve(hess, grad)
-    w = w - gamma * sol
-    return w, loss
-
-############################################
-#  penalized logistic regression           #
-############################################
-############################################
-# The following function is not part of    #
-# any implementation                       #
-############################################
-
-
-def penalized_logistic_regression(y, tx, w, lambda_):
-    """
-    This function calculates the main quantities used in the regularized logistic regression framework
-    :param y: the vector of the outputs
-    :param tx: the dataset matrix
-    :param w: the weights vector
-    :param lambda_: the regularization parameter
-    :return: the gradient,
-    """
-    loss = compute_loss(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
-    grad = compute_gradient(y, tx, w) + 2 * lambda_ * w
-    hess = calculate_hessian(y, tx, w) + 2 * lambda_ * np.eye(w.shape[0])
-    return loss, grad, hess
-
 ##########################################
 #         Cross Validation  &            #
 #      Hyper-parameter Finetuning         #
@@ -366,3 +291,78 @@ def finetune_batch_logistic(tX, y, gamma , degrees, lambdas, k_fold=4):
     print(lambda_opt, degree_opt)
     print(np.amax(testing_acc))
     return lambda_opt[0], degree_opt[0]
+
+#############################################
+#        newton method                      #
+#############################################
+############################################
+# The following functions are not part of  #
+# any implementation                       #
+############################################
+
+def calculate_hessian(y, tX, w):
+    """
+    This function returns the Hessian of the logistic loss function: it is a well known fact that the Hessian can be
+    factorized as tX.T @ D @ tX where D is a diagonal matrix whose i-th diagonal element is the derivative of the
+    logistic function evaluated in (tX @ w)[i]
+    :param y: the vector of the outputs
+    :param tX: the dataset matrix
+    :param w: the weights vector
+    :return: the Hessian of the loss associated to the logistic function calculated in w
+    """
+    diag = sigmoid(tX @ w) * (1 - sigmoid(tX @ w))
+    D = diag * np.eye(tX.shape[0])
+    return np.transpose(tX) @ D @ tX
+
+
+def logistic_regression_compute(y, tX, w):
+    """
+    This function calculates the main quantities used in the logistic regression framework
+    :param y: the vector of the outputs
+    :param tX: the dataset matrix
+    :param w: the weights vector
+    :return: the loss, the gradient and the Hessian calculated in the previous functions above
+    """
+    grad = calculate_gradient(y, tX, w)
+    hess = calculate_hessian(y, tX, w)
+    loss = calculate_loss(y, tX, w)
+    return loss, grad, hess
+
+def learning_by_newton_method(y, tx, w, gamma):
+    """
+    This function implements the Newton Method, i.e. the standard gradient descent is modified as the
+    iterative descent algorithm now follows the direction of the gradient subject to the affine transformation
+    performed by the second order geometry of the system
+    :param y: the vector of the outputs
+    :param tx: the dataset matrix
+    :param w: the weights vector
+    :param gamma: the learning rate
+    :return: the loss and the weights calculated after one iteration of the Newton's Method for the logistic regression
+    """
+    loss, grad, hess = logistic_regression_compute(y, tx, w)
+    sol = np.linalg.solve(hess, grad)
+    w = w - gamma * sol
+    return w, loss
+
+############################################
+#  penalized logistic regression           #
+############################################
+############################################
+# The following function is not part of    #
+# any implementation                       #
+############################################
+
+
+def penalized_logistic_regression(y, tx, w, lambda_):
+    """
+    This function calculates the main quantities used in the regularized logistic regression framework
+    :param y: the vector of the outputs
+    :param tx: the dataset matrix
+    :param w: the weights vector
+    :param lambda_: the regularization parameter
+    :return: the gradient,
+    """
+    loss = calculate_loss(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
+    grad = calculate_gradient(y, tx, w) + 2 * lambda_ * w
+    hess = calculate_hessian(y, tx, w) + 2 * lambda_ * np.eye(w.shape[0])
+    return loss, grad, hess

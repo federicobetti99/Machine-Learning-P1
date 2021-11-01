@@ -66,7 +66,7 @@ w_logistic_3_model_3 = optimal_weights_logistic(tX_tilda_3, y_3, gamma, degree=2
 DATA_TEST_PATH = '../Data/test.csv' # TODO: download train data and supply path here
 _, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
 
-tX_test_0, tX_test_1, tX_test_2, tX_test_3 = alternative_split_to_Jet_Num(tX_test)
+tX_test_0, tX_test_1, tX_test_2, tX_test_3 = split_to_Jet_Num(tX_test)
 
 tX_test_0 = find_mass(tX_test_0)
 tX_test_1 = find_mass(tX_test_1)
