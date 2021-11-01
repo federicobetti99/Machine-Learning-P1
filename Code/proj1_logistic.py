@@ -17,7 +17,7 @@ def cross_validation_logistic(y, x, k_indices, k, lambda_, degree, gamma, crossi
     :param lambda_: the regularization term
     :param degree: the degree for augmentation of each feature
     :param gamma: the learning rate for penalized gradient descent
-    :param crossing: a boolean which is True if we perform crossing feature expansion, False otherwise
+    :param crossing: a boolean which is True if we add feature crosses, False otherwise
     :return: the testing accuracy calculated for the hyper-parameters given in input
     """
     N = y.shape[0]
@@ -74,7 +74,7 @@ def finetune_logistic(tX, y, gamma , degrees, lambdas, k_fold=4, crossing = Fals
     :param degrees: the range of the degrees to be tested for data augmentation
     :param lambdas: the different lambdas that can be used as a regularization param
     :param k_fold: the number of splits the dataset should be divided into
-    :param crossing:  a boolean which is True if we perform crossing feature expansion, False otherwise
+    :param crossing:  a boolean which is True if we add feature crosses, False otherwise
     :return: the degree and lambda which are maximizing the test accuracy calculated by the cross-validation function
     """
     seed = 3
@@ -107,7 +107,7 @@ def optimal_weights_logistic(tX, y, gamma, degree, lambda_, crossing = False):
     :param gamma: the learning rate
     :param degree: the optimal degree for data augmentation
     :param lambda_: the optimal regularization parameter (simply 0 if we perform logistic regression without regularization)
-    :param crossing: a boolean which is True if we perform crossing feature expansion, False otherwise
+    :param crossing: a boolean which is True if we add feature crosses, False otherwise
     :return: the optimal weights calculated by regularized logistic regression with the hyper-parameters returned by the finetuning
     """
     if crossing is False:
@@ -129,7 +129,7 @@ def predict_logistic(tX, w, degree, crossing = False):
     :param tX: the array of features of the samples
     :param w: the optimal weights for the model
     :param degree: the optimal degree for polynomial augmentation of each feature
-    :param crossing: a boolean which is True if we perform crossing feature expansion, False otherwise
+    :param crossing: a boolean which is True if we add feature crosses, False otherwise
     :return: the logistic regression predictions in {-1,1}
     """
     #since we trained the model in augmented data, we augment the test set
