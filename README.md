@@ -1,42 +1,42 @@
-# Machine-Learning-Project-1
+# Machine Learning Project 1
 First Project of the Machine Learning course
 
-# File Structure
-```console
-.
-├── Code
-│   ├── implementations.py
-│   ├── proj1_helpers.py
-│   ├── proj1_input_manipulation.py
-│   ├── proj1_linear_model.py
-│   ├── proj1_logistic.py
-│   ├── proj1_ridge_regress.py
-│   ├── README.md
-│   ├── run_grad.ipynb
-│   ├── run_least_squares.ipynb
-│   ├── run_logistic.ipynb
-│   ├── run.py
-│   ├── run_regularized_logistic.ipynb
-│   ├── run_ridge.ipynb
-│   └── run_stochastic_grad.ipynb
-├── Data
-│   ├── data.zip
-│   └── README.md
-├── README.md
-└── Report.pdf
-```
-## Code
+## Repository Structure
+* `code` - Folder containing the implementation of the Deep Frank-Wolfe Algorithm
+  * `implementations.py` - Implementation of all required optimization algorithms.
+  * `proj1_helpers.py` - Utilities for training.
+  * `proj1_input_manipulation.py` - Preprocessing utilities.
+  * `proj1_linear_model.py` - GD and SGD utilities.
+  * `proj1_linear_model.py` - GD and SGD utilities.
+  * `proj1_logistic.py` - Logistic regression utilities.
+  * `proj1_ridge_regression.py` - Ridge regression utilities.
+  * `run.py` - Reproducibility of best model.
+  * `run_grad.ipynb` - Reproducibility of best GD results.
+  * `run_least_squares.ipynb` - Reproducibility of best LS results.
+  * `run_logistic.ipynb` - Reproducibility of best model.
+  * `run_regularized_logistic.ipynb` - Reproducibility of best regularized logistic regression results.
+  * `run_ridge.ipynb` - Reproducibility of best ridge regression results.
+  * `run_stochastic_grad.ipynb` - Reproducibility of best SGD results.
+* `data` - Contains a zip with the original dataset.
+* `report` - This folder contains the report of the obtained results
+  * `report.pdf` - Report pdf file
+* `requirements.txt` - Requirements text file
 
-The code folder contains all the python files as well as all the jupyter notebooks. For more information read the corresponding **README.md** file in that directory.
+## Installation
+To clone the following repository, please run:\
+`git clone --recursive https://github.com/johnmavro/Machine-Learning-P1.git`
 
-## Data
+## Requirements
+Requirements for the needed packages are available in requirements.txt. To install the needed packages, please run:\
+`pip install -r requirements.txt`
 
-The data folder.<br>
-It currently contains a single zip **data.zip** file which includes the **test.csv** and the **train.csv**.<br>
-Open the zip inside that folder in order to execute the programs <br>
-All the programs outputs(**the created csvs**) are placed in this folder in order for them to be arranged neatly.<br>
-For more information read the corresponding **README.md** file in that directory.
+## Reproducibility of the results
+The notebooks for reproducibility of the best training results can be found in the `code` folder. Please refer to the repository description above for detailed instructions.
 
-### Report.pdf
+## Report
+The report in pdf format can be found in the folder `report`.
 
-The two page report with an extensive explanation of our work, our thought process, our results and our conclusions.
+## Authors
+- Federico Betti
+- Ioannis Mavrothalassitis
+- Luca Rossi
